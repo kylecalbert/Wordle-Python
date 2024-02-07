@@ -1,45 +1,48 @@
 import random
 import sys
 from termcolor import colored
+import nltk
+from nltk.corpus import words
+
 def print_menu():   
     print("Type a 5 letter Word and hit enter!\n")
 
 def read_random_word():
-    with open ("words.text") as f:
-        words = f.read().splitlines() #create a seperate value in array for each line in file which is individual word
-        return random.choice(words)
-    
+    return random.choice(words.words())
+
+# Ensure NLTK data is downloaded
+nltk.download('words')
+
+# Load NLTK words corpus
+word_list = words.words()
+words_five = [word for word in word_list if len(word) == 5]
 
 print_menu()
-word = read_random_word() #going to put random word into this vvariable
 
 play_again = ""
-while(play_again!="q"):
-    
-    for attempt in range(1,7):
-        guess = input().lower() #this converts users input to lowercase
+while play_again != "q":
+    word = read_random_word()
+
+    for attempt in range(1, 7):
+        guess = input("Your guess: ").lower()
+
         sys.stdout.write('\x1b[1A')
         sys.stdout.write('\x1b[2K')
 
-
-        for i in range(min(len(guess),5)) :
-            if guess[i] == word[i]:   #if guess index is same as word index, it is in correct spot
+        for i in range(min(len(guess), 5)):
+            if guess[i] == word[i]:
                 print(colored(guess[i], "green"), end="")
-
             elif guess[i] in word:
-                print(colored(guess[i], 'yellow'), end= "")
-
+                print(colored(guess[i], 'yellow'), end="")
             else:
                 print(guess[i], end="")
+        
         print()
 
         if guess == word:
-         print(colored( f"Congrats! you got the wordle in {attempt} attempts, 'red"))
-         break
+            print(colored(f"Congrats! You got the wordle in {attempt} attempts!", 'red'))
+            break
+        elif attempt == 6:
+            print(f"Sorry, the word was: {word}")
 
-        
-
-
-
-
-
+    play_again = input("Want to play again? Type 'q' to exit: ")
